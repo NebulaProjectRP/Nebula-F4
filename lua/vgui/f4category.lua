@@ -34,6 +34,14 @@ function PANEL:OnChildRemoved(child)
     self:InvalidateLayout(true)
 end
 
+function PANEL:SetCookie(id)
+    self.m_sCookie = id
+    local shouldBeOff = cookie.GetNumber("category." .. id, 0) == 0
+    if (shouldBeOff) then
+        self:UpdateLayout(false)
+    end
+end
+
 function PANEL:OnChildAdded(pnl)
     table.insert(self.Items, pnl)
     self:SetVisible(self.IsToggled)
