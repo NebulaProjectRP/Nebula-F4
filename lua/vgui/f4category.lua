@@ -1,7 +1,8 @@
 local PANEL = {}
-AccessorFunc(PANEL, "m_cHeaderColor", "HeaderColor", FORCE_COLOR)
+AccessorFunc(PANEL, "m_cHeaderColor", "HeaderColor")
 AccessorFunc(PANEL, "m_iColumns", "Columns", FORCE_NUMBER)
 AccessorFunc(PANEL, "m_sCookie", "Cookie", FORCE_STRING)
+
 function PANEL:Init()
 
     self.Items = {}
@@ -14,6 +15,7 @@ function PANEL:Init()
     self.Header:SetText("")
     self.Header:SetTall(24)
     self.Header:SetFont(NebulaUI:Font(20))
+    self.Header:SetTextColor(color_white)
     self.Header:SetContentAlignment(4)
     self.Header:SetTextInset(8, 0)
 
@@ -21,7 +23,7 @@ function PANEL:Init()
         draw.RoundedBox(4, 0, 0, w, h, Color(255, 255, 255, 50))
         draw.RoundedBox(4, 1, 1, w - 2, h - 2, self:GetHeaderColor())
 
-        draw.SimpleText(self.IsToggled and "[-]" or "[+]", NebulaUI:Font(20), w - 18, h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(self.IsToggled and "[ - ]" or "[ + ]", NebulaUI:Font(20), w - 4, 10, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
     end
 
     self.Header.DoClick = function()
@@ -45,15 +47,16 @@ end
 function PANEL:OnChildAdded(pnl)
     table.insert(self.Items, pnl)
     self:SetVisible(self.IsToggled)
-    self:InvalidateLayout(true)
+    
 end
 
 function PANEL:PerformLayout(w, h)
     if (self.norelayout) then return end
+    if (#self.Items == 0) then return end
     local column = 0
-    local counter = 0
+    local counter = -1
     local lineHeight = 0
-    local itemWide = (w - 8) / self:GetColumns()
+    local itemWide = (w - 16) / self:GetColumns()
     for k = 1, #self.Items do
         counter = counter + 1
         local item = self.Items[k]
@@ -62,11 +65,12 @@ function PANEL:PerformLayout(w, h)
             counter = 0
             lineHeight = lineHeight + item:GetTall() + 4
         end
-        item:SetPos(counter * itemWide + 4, 28 + lineHeight)
+        item:SetPos(counter * (itemWide + 6) + 6, 28 + lineHeight)
         item:SetWide(itemWide)
     end
 
-    self.TotalHeight = lineHeight + 32
+    self.TotalHeight = lineHeight + 32 + self.Items[1]:GetTall()
+    //MsgN("Performing layout for ", self.Header:GetText(), " result: ", self.TotalHeight)
 end
 
 function PANEL:UpdateLayout(b)
@@ -79,22 +83,36 @@ function PANEL:UpdateLayout(b)
         self:InvalidateLayout(true)
     end
     self.norelayout = true
-    self:SetTall(self.TotalHeight)
+    self:SetTall(self.IsToggled and self.TotalHeight or 32)
     self:InvalidateParent(true)
     self.norelayout = false
 
     if (self:GetCookie() != "") then
         cookie.Set("category." .. self:GetCookie(), self.IsToggled and 1 or 0)
     end
+
 end
 
 function PANEL:SetText(text)
     self.Header:SetText(text)
 end
 
+PANEL.SetTitle = PANEL.SetText
+
 function PANEL:Paint(w, h)
     draw.RoundedBox(4, 0, 0, w, h, Color(255, 255, 255, 25))
     draw.RoundedBox(4, 1, 1, w - 2, h - 2, Color(42, 36, 42, 200))
+
+    DisableClipping(true)
+    draw.SimpleText(tostring(self.IsToggled) ,NebulaUI:Font(16), -8, h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    DisableClipping(false)
 end
 
 vgui.Register("nebula.f4.category", PANEL, "DPanel")
+
+if IsValid(NebulaF4.Panel) then
+    NebulaF4.Panel:Remove()
+end
+
+vgui.Create("nebula.f4")
+
