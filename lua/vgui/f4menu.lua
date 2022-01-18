@@ -21,9 +21,9 @@ function PANEL:Init()
     self.Body:DockMargin(mx, my / 2, mx, my)
     self.Tabs:SetContent(self.Body)
 
+    self.Tabs:AddTab("Shop", "nebula.f4.shop")
     self.Tabs:AddTab("Inventory", "nebula.f4.inventory")
     self.Tabs:AddTab("Jobs", "nebula.f4.jobs")
-    self.Tabs:AddTab("Shop", "DPanel")
     self.Tabs:AddTab("Mining", "DPanel")
 
     self:SetAlpha(0)
@@ -42,3 +42,4 @@ function PANEL:Paint(w, h)
 end
 */
 vgui.Register("nebula.f4", PANEL, "nebula.frame")
+

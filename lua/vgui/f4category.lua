@@ -56,7 +56,7 @@ function PANEL:PerformLayout(w, h)
     local column = 0
     local counter = -1
     local lineHeight = 0
-    local itemWide = (w - 16) / self:GetColumns()
+    local itemWide = (w - self:GetColumns() * 8) / self:GetColumns()
     for k = 1, #self.Items do
         counter = counter + 1
         local item = self.Items[k]
@@ -102,17 +102,6 @@ PANEL.SetTitle = PANEL.SetText
 function PANEL:Paint(w, h)
     draw.RoundedBox(4, 0, 0, w, h, Color(255, 255, 255, 25))
     draw.RoundedBox(4, 1, 1, w - 2, h - 2, Color(42, 36, 42, 200))
-
-    DisableClipping(true)
-    draw.SimpleText(tostring(self.IsToggled) ,NebulaUI:Font(16), -8, h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-    DisableClipping(false)
 end
 
 vgui.Register("nebula.f4.category", PANEL, "DPanel")
-
-if IsValid(NebulaF4.Panel) then
-    NebulaF4.Panel:Remove()
-end
-
-vgui.Create("nebula.f4")
-
