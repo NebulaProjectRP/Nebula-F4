@@ -14,7 +14,8 @@ end
 MsgC(Color(0, 255, 0), "[F4Menu]", color_white, " Loaded!\n")
 
 if CLIENT then return end
-util.AddNetworkString("NebulaRP.F4Purchase")
+util.AddNetworkString("NebulaRP.F4:Purchase")
+util.AddNetworkString("NebulaRP.F4:RemoveEntity")
 
 net.Receive("NebulaRP.F4Purchase", function(l, ply)
     local ammoID = net.ReadUInt(8)

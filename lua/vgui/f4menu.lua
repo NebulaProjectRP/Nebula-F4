@@ -11,6 +11,9 @@ function PANEL:Init()
     self:DockPadding(0, 0, 0, 0)
 
     self.Tabs = vgui.Create("nebula.tab", self)
+    self.Tabs.OnTabSelected = function(s, tab, content)
+        cookie.Set("nebula_f4_tab", tab:GetText())
+    end
     self.Tabs:Dock(TOP)
     self.Tabs:SetTall(48)
     self.Tabs:DockMargin(16, 16, 16, 16)
@@ -21,25 +24,28 @@ function PANEL:Init()
     self.Body:DockMargin(mx, my / 2, mx, my)
     self.Tabs:SetContent(self.Body)
 
-    self.Tabs:AddTab("Shop", "nebula.f4.shop")
-    self.Tabs:AddTab("Inventory", "nebula.f4.inventory")
-    self.Tabs:AddTab("Jobs", "nebula.f4.jobs")
-    self.Tabs:AddTab("Mining", "DPanel")
+    self.Tabs:AddTab("Inventory", "nebula.f4.inventory", true)
+    self.Tabs:AddTab("Jobs", "nebula.f4.jobs", true)
+    self.Tabs:AddTab("Shop", "nebula.f4.shop", true)
+    self.Tabs:AddTab("Mining", "DPanel", true)
+    
+    self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Inventory"))
 
     self:SetAlpha(0)
-    self:AlphaTo(255, .5, 0)
+    self:AlphaTo(255, .2, 0)
 
-    hook.Add("HUDShouldDraw", self, function()
-        return false
-    end)
 end
-/*
+
+function PANEL:OnKeyCodePressed(btn)
+    if (btn == KEY_F4) then
+        DarkRP.closeF4Menu()
+    end
+end
+
 function PANEL:Paint(w, h)
-    //draw.RoundedBox(8, 0, 0, w, h, Color(27, 13, 31, 255))
-    //surface.SetDrawColor(0, 0, 0, 240)
-    //surface.DrawRect(0, 0, w, h)
-    //self:DrawBlur( 3, 5 )
+    draw.RoundedBox(8, 0, 0, w, h, Color(255, 255, 255, self.Dragging and 100 or 25))
+    draw.RoundedBox(8, 1, 1, w - 2, h - 2, Color(16, 0, 24, 250))
 end
-*/
+
 vgui.Register("nebula.f4", PANEL, "nebula.frame")
 

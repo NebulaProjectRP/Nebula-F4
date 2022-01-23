@@ -69,7 +69,7 @@ local tabs = {
         end,
         Get = function(item, amount)
             PrintTable(item)
-            net.Start("NebulaRP.F4Purchase")
+            net.Start("NebulaRP.F4:Purchase")
             net.WriteUInt(item.id, 8)
             net.WriteUInt(amount, 12)
             net.SendToServer()
