@@ -16,7 +16,7 @@ function PANEL:Init()
     end
     self.Tabs:Dock(TOP)
     self.Tabs:SetTall(48)
-    self.Tabs:DockMargin(16, 16, 16, 16)
+    self.Tabs:DockMargin(16, 16, 16, 8)
 
     local mx, my = 16, 16//self:GetWide() * .1, self:GetTall() * .1
     self.Body = vgui.Create("Panel", self)
@@ -28,6 +28,8 @@ function PANEL:Init()
     self.Tabs:AddTab("Jobs", "nebula.f4.jobs", true)
     self.Tabs:AddTab("Shop", "nebula.f4.shop", true)
     self.Tabs:AddTab("Mining", "DPanel", true)
+
+    hook.Run("OnF4MenuCreated", self)
     
     self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Inventory"))
 

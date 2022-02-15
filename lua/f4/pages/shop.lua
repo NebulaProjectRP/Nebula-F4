@@ -400,5 +400,5 @@ if IsValid(NebulaF4.Panel) then
     NebulaF4.Panel:Remove()
 end
 
-vgui.Create("nebula.f4")
+//vgui.Create("nebula.f4")
 

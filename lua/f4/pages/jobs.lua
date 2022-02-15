@@ -57,6 +57,20 @@ function PANEL:Init()
         end
     end
 
+    self.DoJoin = vgui.Create("nebula.button", self.Preview)
+    self.DoJoin:Dock(BOTTOM)
+    self.DoJoin:SetText("Join")
+    self.DoJoin:SetTall(32)
+    self.DoJoin.DoClick = function(s)
+        if self.Selected.vote then
+            RunConsoleCommand("darkrp", "vote" .. self.Selected.command)
+        else
+            RunConsoleCommand("darkrp", self.Selected.command)
+        end
+
+        s:SetText("Joined!")
+    end
+
     local header = vgui.Create("Panel", self)
     header:Dock(TOP)
     header:SetTall(32)
@@ -200,7 +214,12 @@ end
 
 function PANEL:PreviewJob(data)
     local mdl = istable(data.model) and DarkRP.getPreferredJobModel(data.team) or data.model
+    if istable(mdl) then
+        mdl = mdl[1]
+    end
     self.Preview:SetModel(mdl)
+    self.Selected = data
+    self.DoJoin:SetText(data.team == LocalPlayer():Team() and "You're already in this job" or "Join this job")
     local ent = self.Preview:GetEntity()
     local att = ent:LookupAttachment("eyes")
     if (att) then
@@ -249,7 +268,7 @@ function JOB:SetJob(job)
     if (isstring(job.model)) then
         self.Icon:SetModel(job.model)
     else
-        self.Icon:SetModel(DarkRP.getPreferredJobModel(job.team))
+        self.Icon:SetModel(DarkRP.getPreferredJobModel(job.team) or job.model[1])
     end
     self.Icon:DockMargin(4, 4, 4, 4)
     self.Icon:SetMouseInputEnabled(false)
