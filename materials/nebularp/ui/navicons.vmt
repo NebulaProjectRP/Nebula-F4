@@ -1,0 +1,5 @@
+UnlitGeneric{
+    "$basetexture" "nebularp/ui/navicons"
+    "$vertexcolor" "1"
+    "$vertexalpha" "1"
+}

@@ -68,7 +68,6 @@ local tabs = {
             return ply:canAfford(cost)
         end,
         Get = function(item, amount)
-            PrintTable(item)
             net.Start("NebulaRP.F4:Purchase")
             net.WriteUInt(item.id, 8)
             net.WriteUInt(amount, 12)

@@ -150,7 +150,9 @@ function PANEL:ManipulateModel(ent)
     ent:SetEyeTarget(Vector(0, 0, 60 - my * 40))
 
     local boneID = ent:LookupBone("ValveBiped.Bip01_Head1")
-    ent:ManipulateBoneAngles(boneID, Angle(0, -20 -my * 20, -25 + mx * 20))
+    if (boneID) then
+        ent:ManipulateBoneAngles(boneID, Angle(0, -20 -my * 20, -25 + mx * 20))
+    end
 end
 
 function PANEL:FillJobs()
