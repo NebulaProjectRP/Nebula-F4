@@ -1,5 +1,8 @@
 local PANEL = {}
 NebulaF4.LastTime = 0
+
+local music = CreateClientConVar("nebula_f4music", "1", true, false)
+
 function PANEL:Init()
     NebulaF4.Panel = self
     self:SetSize(ScrW() * .8, ScrH() * .8)
@@ -41,6 +44,34 @@ function PANEL:Init()
         NebulaF4.Music:Stop()
     end
 
+    if (music:GetBool()) then
+        self:SpawnMusic()
+    end
+
+    self.musicOption = vgui.Create("DButton", self)
+    self.musicOption:SetText("")
+    self.musicOption:SetSize(28, 28)
+    self.musicOption:SetZPos(999)
+    self.musicOption.DoClick = function()
+        music:SetBool(!music:GetBool())
+
+        if (music:GetBool()) then
+            self:SpawnMusic()
+        else
+            if (IsValid(NebulaF4.Music)) then
+                NebulaF4.Music:Stop()
+            end
+        end
+    end
+
+    self.musicOption.Paint = function(s, w, h)
+        local size = h * (s:IsHovered() and .9 or .8)
+        NebulaUI.Derma.InventorySub[music:GetBool() and 5 or 6](w / 2 - size / 2, h / 2 - size / 2 + 2, size, size, Color(255, 255, 255, s:IsHovered() and 255 or 150))
+    end
+    surface.PlaySound("nebularp/selectoption.mp3")
+end
+
+function PANEL:SpawnMusic()
     sound.PlayFile( "sound/nebularp/f4arcade.mp3", "noblock", function( station, errCode, errStr )
         if ( IsValid( station ) ) then
             station:Play()
@@ -48,12 +79,8 @@ function PANEL:Init()
             station:SetTime(NebulaF4.LastTime)
             station:EnableLooping(true)
             NebulaF4.Music = station
-        else
-            print( "Error playing sound!", errCode, errStr )
         end
     end )
-
-    surface.PlaySound("nebularp/selectoption.mp3")
 end
 
 function PANEL:OnKeyCodePressed(btn)
@@ -81,6 +108,19 @@ function PANEL:Paint(w, h)
     draw.RoundedBox(8, 1, 1, w - 2, h - 2, Color(16, 0, 24, 250))
     if (IsValid(NebulaF4.Music) and NebulaF4.Music:GetVolume() < .2) then
         NebulaF4.Music:SetVolume(NebulaF4.Music:GetVolume() + FrameTime() / 2)
+    end
+end
+
+function PANEL:PerformLayout(w, h)
+    self.lblTitle:SetSize(w - 32, 28)
+    self.lblTitle:SetPos(8, 2)
+
+    self.btnClose:SetSize(28, 28)
+    self.btnClose:SetPos(w - 32, 2)
+    self.btnClose:SetZPos(999)
+
+    if (IsValid(self.musicOption)) then
+        self.musicOption:SetPos(w - 32 - 28, 2)
     end
 end
 
