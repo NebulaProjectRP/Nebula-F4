@@ -29,7 +29,7 @@ function PANEL:Init()
 
     self.Tabs:AddTab("Inventory", "nebula.f4.inventory", true):SetIcon(NebulaUI.Derma.F4[1]):SetColor(Color(0, 153, 255))
     self.Tabs:AddTab("Jobs", "nebula.f4.jobs", true):SetIcon(NebulaUI.Derma.F4[2]):SetColor(Color(57, 165, 36))
-    self.Tabs:AddTab("Supplies", "nebula.f4.shop", true):SetIcon(NebulaUI.Derma.F4[7]):SetColor(Color(226, 108, 255))
+    self.Tabs:AddTab("Supplies", "nebula.f4.shop", true):SetIcon(NebulaUI.Derma.F4[6]):SetColor(Color(226, 108, 255))
     self.Tabs:AddTab("Mining", "nebula.f4.mining", true):SetIcon(NebulaUI.Derma.F4[4]):SetColor(Color(173, 63, 29))
 
     hook.Run("OnF4MenuCreated", self)
