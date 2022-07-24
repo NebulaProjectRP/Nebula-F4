@@ -14,9 +14,7 @@ function PANEL:Init()
     self:DockPadding(0, 0, 0, 0)
 
     self.Tabs = vgui.Create("nebula.tab", self)
-    self.Tabs.OnTabSelected = function(s, tab, content)
-        cookie.Set("nebula_f4_tab", tab:GetText())
-    end
+
     self.Tabs:Dock(TOP)
     self.Tabs:SetTall(48)
     self.Tabs:DockMargin(16, 16, 16, 8)
@@ -34,7 +32,11 @@ function PANEL:Init()
 
     hook.Run("OnF4MenuCreated", self)
     
-    self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Inventory"))
+    self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Gangs"))
+
+    self.Tabs.OnTabSelected = function(s, tab, content)
+        cookie.Set("nebula_f4_tab", tab:GetText())
+    end
 
     self:SetAlpha(0)
     self:AlphaTo(255, .2, 0)
