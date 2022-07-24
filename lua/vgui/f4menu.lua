@@ -5,7 +5,7 @@ local music = CreateClientConVar("nebula_f4music", "1", true, false)
 
 function PANEL:Init()
     NebulaF4.Panel = self
-    self:SetSize(ScrW() * .8, ScrH() * .8)
+    self:SetSize(math.max(ScrW() * .85, 1200), ScrH() * .85)
     //self:SetSize(ScrW(), ScrH())
     self:MakePopup()
     self:SetTitle("")
