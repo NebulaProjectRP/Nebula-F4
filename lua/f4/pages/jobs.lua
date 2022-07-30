@@ -178,36 +178,37 @@ function PANEL:FillJobs()
 
     self.Categories = {}
 
-    for k, v in pairs(jobData) do
-        local cat = v.category or "Other"
-        if not IsValid(self.Categories[cat]) then
+    local categories = DarkRP:getCategories().jobs
+
+    for _, cat in pairs(categories) do
+        local cantSee = table.IsEmpty(cat.members) or isfunction(cat.canSee) and not cat.canSee(LocalPlayer())
+
+        if (cantSee) then continue end
+
+        if not IsValid(self.Categories[cat.name]) then
             local category = vgui.Create("nebula.f4.category", self.Content)
-            category:SetTitle(cat)
+            category:SetTitle(cat.name)
             category:SetColumns(2)
             category:Dock(TOP)
             category:DockMargin(0, 0, 0, 8)
-            for i, job in pairs(DarkRP.getCategories().jobs) do
-                if (job.name ==  v.category) then
-                    category:SetHeaderColor(job.color)
-                    break
-                end
+            category:SetHeaderColor(cat.color)
+            self.Categories[cat.name] = category
+        end
+        
+        for _, v in pairs(cat.members) do
+            local job = vgui.Create("nebula.f4.job.item", self.Categories[cat.name])
+            job:SetJob(v)
+            job.DoClick = function(s)
+                self.Selected = s
+                self:PreviewJob(v)
             end
-            self.Categories[cat] = category
-        end
 
-        local job = vgui.Create("nebula.f4.job.item", self.Categories[cat])
-        job:SetJob(v)
-        job.DoClick = function(s)
-            self.Selected = s
-            self:PreviewJob(v)
-        end
-
-        if (self.NoStarted and v.team == LocalPlayer():Team()) then
-            self.NoStarted = nil
-            job:DoClick()
+            if (self.NoStarted and v.team == LocalPlayer():Team()) then
+                self.NoStarted = nil
+                job:DoClick()
+            end
         end
     end
-
 
     for k, v in pairs(self.Categories) do
         v:UpdateLayout(v.IsToggled)
