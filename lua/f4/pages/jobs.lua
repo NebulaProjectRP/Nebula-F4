@@ -155,21 +155,37 @@ function PANEL:ManipulateModel(ent)
     end
 end
 
-function PANEL:FillJobs()
-    local jobData = table.Copy(RPExtraTeams)
-    local search = self.Header:GetText()
-    local orderBy = self.OrderBy:GetSelected()
+function searchJobs(query, categories)
+    local found = {}
 
-    if (search != "") then
-        for k, v in pairs(jobData) do
-            if not string.find(string.lower(v.name), string.lower(search)) then
-                jobData[k] = nil
+    for _, cat in pairs(categories) do
+        for _, job in pairs(cat.members) do
+            if string.find(string.lower(job.name), string.lower(query)) then
+                local cc = table.Copy(cat)
+                cc.members = { job }
+                table.insert(found, cc)
             end
         end
     end
 
+    return found
+end
+
+function PANEL:FillJobs()
+    local categories = table.Copy(DarkRP:getCategories().jobs)
+
+    local jobData = table.Copy(RPExtraTeams)
+    local query = self.Header:GetText()
+    local orderBy = self.OrderBy:GetSelected()
+
+    if (query ~= "") then
+        categories = searchJobs(query, categories)
+    end
+
     if (sortModes[orderBy]) then
-        table.sort(jobData, sortModes[orderBy])
+        for _, cat in pairs(categories) do
+            table.sort(cat.members, sortModes[orderBy])
+        end
     end
 
     for k, v in pairs(self.Categories) do
@@ -177,9 +193,7 @@ function PANEL:FillJobs()
     end
 
     self.Categories = {}
-
-    local categories = DarkRP:getCategories().jobs
-
+    
     for _, cat in pairs(categories) do
         local cantSee = table.IsEmpty(cat.members) or isfunction(cat.canSee) and not cat.canSee(LocalPlayer())
 
