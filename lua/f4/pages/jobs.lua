@@ -173,8 +173,6 @@ end
 
 function PANEL:FillJobs()
     local categories = table.Copy(DarkRP:getCategories().jobs)
-
-    local jobData = table.Copy(RPExtraTeams)
     local query = self.Header:GetText()
     local orderBy = self.OrderBy:GetSelected()
 
