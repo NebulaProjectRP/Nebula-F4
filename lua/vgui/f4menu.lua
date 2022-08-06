@@ -32,7 +32,7 @@ function PANEL:Init()
 
     hook.Run("OnF4MenuCreated", self)
     
-    self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Gangs"))
+    self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Inventory"))
 
     self.Tabs.OnTabSelected = function(s, tab, content)
         cookie.Set("nebula_f4_tab", tab:GetText())
