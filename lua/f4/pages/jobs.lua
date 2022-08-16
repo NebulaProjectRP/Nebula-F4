@@ -56,6 +56,11 @@ function PANEL:Init()
             end)
         end
     end
+    self.Preview.PaintOver = function(s, w, h)
+        if (self.mk) then
+            self.mk:Draw(8, h - 40, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+        end
+    end
 
     self.DoJoin = vgui.Create("nebula.button", self.Preview)
     self.DoJoin:Dock(BOTTOM)
@@ -227,6 +232,12 @@ function PANEL:FillJobs()
     end
 end
 
+surface.CreateFont("F4.Description", {
+    font = "Montserrat Medium",
+    size = 20,
+    shadow = true
+})
+
 function PANEL:PreviewJob(data)
     local mdl = istable(data.model) and DarkRP.getPreferredJobModel(data.team) or data.model
     if istable(mdl) then
@@ -234,6 +245,7 @@ function PANEL:PreviewJob(data)
     end
     self.Preview:SetModel(mdl)
     self.Selected = data
+    self.mk = markup.Parse("<font=F4.Description>" .. data.description .. "<font>", self.Preview:GetWide() - 16)
     self.DoJoin:SetText(data.team == LocalPlayer():Team() and "You're already in this job" or "Join this job")
     local ent = self.Preview:GetEntity()
     local att = ent:LookupAttachment("eyes")
@@ -314,7 +326,7 @@ function JOB:Paint(w, h)
     else
         local limit = self.job.max < 1 and self.job.max * player.GetCount() or self.job.max
         for k = 1, limit do
-            icons[k > count and "empty" or "full"](52, h - 22, 10, 20, Color(255, 255, 255))
+            icons[k > count and "empty" or "full"](52 + (k - 1) * 12, h - 20, 10, 16, Color(255, 255, 255))
         end
     end
 end
