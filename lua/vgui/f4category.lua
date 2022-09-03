@@ -70,7 +70,6 @@ function PANEL:PerformLayout(w, h)
     end
 
     self.TotalHeight = lineHeight + 32 + self.Items[1]:GetTall()
-    //MsgN("Performing layout for ", self.Header:GetText(), " result: ", self.TotalHeight)
 end
 
 function PANEL:UpdateLayout(b)

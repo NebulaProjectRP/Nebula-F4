@@ -270,7 +270,6 @@ function STORE:FillContent(filter)
             item.Buy.DoClick = function(s)
                 if (self.check(v)) then
                     surface.PlaySound("buttons/button14.wav")
-                    //MsgN(s.Amount)
                     self.get(v, item.BulletsAmount)
                 else
                     surface.PlaySound("player/suit_denydevice.wav")

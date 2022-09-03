@@ -67,15 +67,43 @@ timer.Simple(0, function()
     end
 
     GAMEMODE.ShowSpare2 = DarkRP.toggleF4Menu
-/*
-    timer.Simple(3, function()
-        DarkRP.openF4Menu()
-
-        timer.Simple(1, function()
-            DarkRP.closeF4Menu()
-        end)
-    end)
-    */
 end)
 
-if CLIENT then return end
+if CLIENT then
+    local text = surface.GetTextureID("nebularp/ui/f4holo")
+
+    hook.Add("PostPlayerDraw", "MagicView", function(ply)
+        if (ply:InArena()) then return end
+
+        if (ply:Alive() and ply:GetNWBool("IsDoingMagic", false)) then
+            local att = ply:LookupAttachment("eyes") ~= -1 and ply:GetAttachment(ply:LookupAttachment("eyes")) or {
+                Pos = ply:GetPos() + Vector(0, 0, 60),
+                Ang = ply:GetAngles()
+            }
+
+            local pos = att.Pos + att.Ang:Forward() * 22 - att.Ang:Right() * 0 + att.Ang:Up() * 4
+            local ang = att.Ang
+            ang:RotateAroundAxis(ang:Forward(), 90)
+            ang:RotateAroundAxis(ang:Right(), 90)
+            render.SetMaterial(Material("trails/physbeam"))
+            render.DrawBeam(att.Pos + Vector(0, 0, 0), pos + ang:Forward() * 19 + ang:Right() * .5, 1 + (math.tan(RealTime() * 4) * 2) % 2, RealTime() % 1, RealTime() % 1 - 1, Color(255, 255, 255, 35))
+            render.DrawBeam(att.Pos + Vector(0, 0, 0), pos - ang:Forward() * 19 + ang:Right() * .5, 1 + (math.tan(RealTime() * 4) * 2) % 2, RealTime() % 1, RealTime() % 1 - 1, Color(255, 255, 255, 35))
+            render.DrawBeam(att.Pos + Vector(0, 0, 0), pos + ang:Forward() * 19 + ang:Right() * 19, 1 + (math.tan(RealTime() * 4) * 2) % 2, RealTime() % 1, RealTime() % 1 - 1, Color(255, 255, 255, 35))
+            render.DrawBeam(att.Pos + Vector(0, 0, 0), pos - ang:Forward() * 19 + ang:Right() * 19, 1 + (math.tan(RealTime() * 4) * 2) % 2, RealTime() % 1, RealTime() % 1 - 1, Color(255, 255, 255, 35))
+            surface.SetDrawColor(Color(255, 255, 255, 255 + math.tan(RealTime() * 16)))
+            surface.SetTexture(text)
+            cam.Start3D2D(pos, ang, 0.075)
+            surface.DrawTexturedRectUV(-256, 0, 512, 256, -0, -0, 1, .492)
+            cam.End3D2D()
+            ang:RotateAroundAxis(ang:Right(), 180)
+            cam.Start3D2D(pos, ang, 0.075)
+            surface.DrawTexturedRectUV(-256, 0, 512, 256, 0, .506, 1, 1)
+            cam.End3D2D()
+        end
+    end)
+
+    hook.Add("CalcMainActivity", "MagicAnimation", function(ply, vel)
+        if (ply:InArena()) then return end
+        if (ply:GetNWBool("IsDoingMagic", false)) then return ACT_HL2MP_RUN_MAGIC, -1 end
+    end)
+end
