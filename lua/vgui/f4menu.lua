@@ -5,11 +5,17 @@ local music = CreateClientConVar("nebula_f4music", "1", true, false)
 
 function PANEL:Init()
     NebulaF4.Panel = self
-    self:SetSize(math.max(ScrW() * .85, 1200), ScrH() * .85)
-    //self:SetSize(ScrW(), ScrH())
+
+    local w, h = cookie.GetNumber("F4.sizeW", math.max(ScrW() * .85, 1200)), cookie.GetNumber("F4.sizeH", ScrH() * .85)
+    local x, y = cookie.GetNumber("F4.posX", ScrW() / 2 - w / 2), cookie.GetNumber("F4.posY", ScrH() / 2 - h / 2)
+
+    self:SetScreenLock(true)
+    self:SetSize(w, h)
+    self:SetPos(x, y)
+    self:SetSizable(true)
+    self:SetMinimumSize(400, 720)
     self:MakePopup()
     self:SetTitle("")
-    self:Center()
 
     self:DockPadding(0, 0, 0, 0)
 
@@ -31,7 +37,7 @@ function PANEL:Init()
     self.Tabs:AddTab("Mining", "nebula.f4.mining", true):SetIcon(NebulaUI.Derma.F4[4]):SetColor(Color(173, 63, 29))
 
     hook.Run("OnF4MenuCreated", self)
-    
+
     self.Tabs:SelectTab(cookie.GetString("nebula_f4_tab", "Inventory"))
 
     self.Tabs.OnTabSelected = function(s, tab, content)
@@ -73,6 +79,20 @@ function PANEL:Init()
     surface.PlaySound("nebularp/selectoption.mp3")
 end
 
+PANEL.DoIgnore = true
+function PANEL:OnSizeChanged(w, h)
+    if self.DoIgnore then
+        self.DoIgnore = false
+        return
+    end
+    local size = {w, h}
+    timer.Create("nebula_f4_size", .1, 1, function()
+        cookie.Set("F4.sizeW", size[1])
+        cookie.Set("F4.sizeH", size[2])
+    end)
+
+end
+
 function PANEL:SpawnMusic()
     sound.PlayFile( "sound/nebularp/f4arcade.mp3", "noblock", function( station, errCode, errStr )
         if ( IsValid( station ) ) then
@@ -110,6 +130,14 @@ function PANEL:Paint(w, h)
     draw.RoundedBox(8, 1, 1, w - 2, h - 2, Color(16, 0, 24, 250))
     if (IsValid(NebulaF4.Music) and NebulaF4.Music:GetVolume() < .2) then
         NebulaF4.Music:SetVolume(NebulaF4.Music:GetVolume() + FrameTime() / 2)
+    end
+
+    if (self.Dragging) then
+        local pos = {self:GetX(), self:GetY()}
+        timer.Create("nebula_f4_pos", .1, 1, function()
+            cookie.Set("F4.posX", pos[1])
+            cookie.Set("F4.posY", pos[2])
+        end)
     end
 end
 
