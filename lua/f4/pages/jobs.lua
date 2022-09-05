@@ -149,6 +149,17 @@ function PANEL:DrawFooter(w, h)
     
 end
 
+function PANEL:PerformLayout(w, h)
+    if not IsValid(self.Preview) then return end
+    if (w < 720) then
+        self.Preview:SetWide(0)
+        self.Preview:SetVisible(false)
+    elseif !self.Preview:IsVisible() then
+        self.Preview:SetWide(256)
+        self.Preview:SetVisible(true)
+    end
+end
+
 function PANEL:ManipulateModel(ent)
     local my = -.4 + gui.MouseY() / ScrH()
     local mx = -.5 + gui.MouseX() / ScrW()

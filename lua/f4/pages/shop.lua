@@ -103,10 +103,13 @@ local tabs = {
 
 function PANEL:Init()
     self:Dock(FILL)
-
+    self.CardHolder = vgui.Create("nebula.grid", self)
+    self.CardHolder:Dock(FILL)
+    self.CardHolder:SetGrid(4, 1)
     self.Pages = {}
     for k = 1, 4 do
-        self:CreateButton(k, tabs[k])
+        local btn = self:CreateButton(k, tabs[k])
+        btn:SetPosGrid(k - 1, 0, k, 1)
     end
 end
 
@@ -118,15 +121,15 @@ function PANEL:PerformLayout(w, h)
     local itemMargin = (itemWide - idealWide) / 2
 
     for k, v in pairs(self.Pages) do
-        v:SetSize(idealWide, h * .8)
-        v:SetPos(mx + itemMargin * k * 1.5 + (idealWide * (k - 1)), h / 2 - v:GetTall() / 2 - 16)
+        //v:SetSize(idealWide, h * .8)
+        //v:SetPos(mx + itemMargin * k * 1.5 + (idealWide * (k - 1)), h / 2 - v:GetTall() / 2 - 16)
     end
 end
 
 local lightWhite = Color(255, 255, 255, 25)
 local darkpurple = Color(16, 0, 24, 240)
 function PANEL:CreateButton(i, tab)
-    local panel = vgui.Create("DButton", self)
+    local panel = vgui.Create("DButton", self.CardHolder)
     panel:SetText(tab.Name)
     panel:SetFont(NebulaUI:Font(28))
     panel:SetTextColor(color_white)
@@ -166,6 +169,27 @@ function PANEL:CreateButton(i, tab)
         self:DoTransition(s)
     end
     table.insert(self.Pages, panel)
+
+    return panel
+end
+
+PANEL.IsCompact = false
+function PANEL:PerformLayout(w, h)
+    if (w < ScrW() / 2 and not self.IsCompact) then
+        self.IsCompact = true
+        self.CardHolder:SetGrid(2, 2)
+        self.Pages[1]:SetPosGrid(0, 0, 1, 1)
+        self.Pages[2]:SetPosGrid(1, 0, 2, 1)
+        self.Pages[3]:SetPosGrid(0, 1, 1, 2)
+        self.Pages[4]:SetPosGrid(1, 1, 2, 2)
+    elseif w >= ScrW() / 2 and self.IsCompact then
+        self.IsCompact = false
+        self.CardHolder:SetGrid(4, 1)
+        self.Pages[1]:SetPosGrid(0, 0, 1, 1)
+        self.Pages[2]:SetPosGrid(1, 0, 2, 1)
+        self.Pages[3]:SetPosGrid(2, 0, 3, 1)
+        self.Pages[4]:SetPosGrid(3, 0, 4, 1)
+    end
 end
 
 function PANEL:DoTransition(panel)
