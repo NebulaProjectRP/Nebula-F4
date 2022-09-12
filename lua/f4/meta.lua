@@ -1,35 +1,36 @@
 if SERVER then
-    
-util.AddNetworkString("F4.Magic")
+    util.AddNetworkString("F4.Magic")
 
-net.Receive("F4.Magic", function(l, ply)
-    local b = net.ReadBool()
-    ply:SetNWBool("IsDoingMagic", b)
-end)
+    net.Receive("F4.Magic", function(l, ply)
+        local b = net.ReadBool()
+        ply:SetNWBool("IsDoingMagic", b)
+    end)
 
-net.Receive("NebulaRP.F4:RemoveEntity", function(l, ply)
-    local id = net.ReadString()
-    for k, v in pairs(ents.FindByClass(id)) do
-        if (v.Getowning_ent && v:Getowning_ent() == ply) then
-            v:Remove()
-            break
+    net.Receive("NebulaRP.F4:RemoveEntity", function(l, ply)
+        local id = net.ReadString()
+
+        for k, v in pairs(ents.FindByClass(id)) do
+            if v.Getowning_ent and v:Getowning_ent() == ply then
+                v:Remove()
+                break
+            end
         end
-    end
-end)
+    end)
 
-return
-
+    return
 end
+
 timer.Simple(0, function()
     function DarkRP.openF4Menu()
-        if (isClosing) then return end
+        if isClosing then return end
+
         if IsValid(NebulaF4.Panel) then
             NebulaF4.Panel:Remove()
             NebulaF4.Panel = nil
         end
 
         local disallow = hook.Run("F4MenuOpen")
-        if (disallow == false) then return end
+        if disallow == false then return end
         NebulaF4.Panel = vgui.Create("nebula.f4")
         gui.InternalMousePressed(MOUSE_LEFT)
         net.Start("F4.Magic")
@@ -39,14 +40,17 @@ timer.Simple(0, function()
     end
 
     local isClosing = false
+
     function DarkRP.closeF4Menu()
         if IsValid(NebulaF4.Panel) and not isClosing then
             isClosing = true
+
             NebulaF4.Panel:AlphaTo(0, .1, 0, function()
                 isClosing = false
                 NebulaF4.Panel:Remove()
                 NebulaF4.Panel = nil
             end)
+
             net.Start("F4.Magic")
             net.WriteBool(false)
             net.SendToServer()
@@ -54,12 +58,11 @@ timer.Simple(0, function()
     end
 
     function DarkRP.toggleF4Menu()
-
         net.Start("F4.Magic")
         net.WriteBool(not IsValid(NebulaF4.Panel))
         net.SendToServer()
 
-        if !IsValid(NebulaF4.Panel) then
+        if not IsValid(NebulaF4.Panel) then
             DarkRP.openF4Menu()
         else
             DarkRP.closeF4Menu()
@@ -73,9 +76,9 @@ if CLIENT then
     local text = surface.GetTextureID("nebularp/ui/f4holo")
 
     hook.Add("PostPlayerDraw", "MagicView", function(ply)
-        if (ply:InArena()) then return end
+        if ply:InArena() then return end
 
-        if (ply:Alive() and ply:GetNWBool("IsDoingMagic", false)) then
+        if ply:Alive() and ply:GetNWBool("IsDoingMagic", false) then
             local att = ply:LookupAttachment("eyes") ~= -1 and ply:GetAttachment(ply:LookupAttachment("eyes")) or {
                 Pos = ply:GetPos() + Vector(0, 0, 60),
                 Ang = ply:GetAngles()
@@ -103,7 +106,7 @@ if CLIENT then
     end)
 
     hook.Add("CalcMainActivity", "MagicAnimation", function(ply, vel)
-        if (ply:InArena()) then return end
-        if (ply:GetNWBool("IsDoingMagic", false)) then return ACT_HL2MP_RUN_MAGIC, -1 end
+        if ply:InArena() then return end
+        if ply:GetNWBool("IsDoingMagic", false) then return ACT_HL2MP_RUN_MAGIC, -1 end
     end)
 end

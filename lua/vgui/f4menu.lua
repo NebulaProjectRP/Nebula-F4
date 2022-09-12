@@ -114,6 +114,9 @@ end
 
 function PANEL:OnRemove()
     if (IsValid(NebulaF4.Music)) then
+        net.Start("F4.Magic")
+        net.WriteBool(false)
+        net.SendToServer()
         hook.Add("Think", NebulaF4.Music, function(music)
             music:SetVolume(music:GetVolume() - FrameTime() * 2)
             if (music:GetVolume() <= 0.01) then
